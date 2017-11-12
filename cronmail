@@ -1,19 +1,20 @@
 #!/bin/bash
 # https://github.com/robzr/cronmail
 
-unset basename header_from header_reply_to mail_from mail_to max_lines reply_to subject_error subject_success
+unset basename header_from header_reply_to mail_from mail_to max_lines reply_to subject_error subject_success tagline
 default_max_lines=1500
 msg_error='Error!'
 msg_success='Successful Run'
 suppress_success=false
+default_tagline='Notification mail generated with <a href=https://github.com/robzr/cronmail>cronmail</a>.'
 
-while getopts ":b:e:f:hl:m:np:r:s:" opt ; do
+while getopts ":b:e:f:hl:m:np:r:s:t:" opt ; do
   case $opt in
     b) basename=$OPTARG        ;;
     e) subject_error=$OPTAR    ;;
     f) mail_from=$OPTARG       ;;
     h) cat <<-_EOF_
-	Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] command [args...]"
+	Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] [-t ..] command [args...]"
 	  -b    Override basename (default is based on command)
 	  -e    Subject for error (defaults to: [\$basename] ${msg_error})
 	  -f    Specify from header
@@ -24,6 +25,7 @@ while getopts ":b:e:f:hl:m:np:r:s:" opt ; do
 	  -p    Prefix command output (defaults is no prefix)
 	  -r    Specify reply-to
 	  -s    Subject for successful run (defaults to: [\$basename] ${msg_success})
+	  -t    Override email tagline
 	_EOF_
        exit -1
        ;;
@@ -33,6 +35,7 @@ while getopts ":b:e:f:hl:m:np:r:s:" opt ; do
     p) command_prefix=$OPTARG  ;;
     r) reply_to=$OPTARG        ;;
     s) subject_success=$OPTARG ;;
+    t) tagline=$OPTARG         ;;
   esac
 done
 
@@ -44,16 +47,17 @@ basename_arg1=${1##*/}
 [ -r ~/.cronmail ]         && . ~/.cronmail
 [ -z "$basename" ]         && basename=${CM_BASENAME:-$basename_arg1}
 [ -z "$command_prefix" ]   && command_prefix=${CM_COMMAND_PREFIX:-''}
-[ -z "$mail_to" ]          && mail_to=${MAILTO:-root@localhost}
-[ -z "$reply_to" ]         && reply_to=$CM_REPLY_TO
-[ -z "$subject_error" ]    && subject_error=${CM_SUBJECT_ERROR:-[$basename] ${msg_error}}
-[ -z "$subject_success" ]  && subject_success=${CM_SUBJECT_SUCCESS:-[$basename] ${msg_success}}
-[ -z "$suppress_success" ] && suppress_success=${CM_SUPPRESS_SUCCESS:-false}
-[ -z "$max_lines" ]        && max_lines=${CM_MAXLINES:-${default_max_lines}}
 [ -n "$mail_from" ]        && header_from="From: $mail_from
 "
 [ -n "$reply_to" ]         && header_reply_to="Reply-To: $reply_to
 "
+[ -z "$mail_to" ]          && mail_to=${MAILTO:-root@localhost}
+[ -z "$max_lines" ]        && max_lines=${CM_MAXLINES:-${default_max_lines}}
+[ -z "$reply_to" ]         && reply_to=$CM_REPLY_TO
+[ -z "$subject_error" ]    && subject_error=${CM_SUBJECT_ERROR:-[$basename] ${msg_error}}
+[ -z "$subject_success" ]  && subject_success=${CM_SUBJECT_SUCCESS:-[$basename] ${msg_success}}
+[ -z "$tagline" ]          && tagline=${CM_TAGLINE:-${default_tagline}}
+
 
 bgcolor=${CM_BGCOLOR:-F8F8F8}
 color=${CM_COLOR:-000000}
@@ -87,5 +91,5 @@ sendmail -i -t <<-_EOF_
 	<p>Command (exit status: $exit_status):&nbsp;<font style="color:#${color};background-color:#${bgcolor};">$@</font></font>
 	<pre style = "border:1px solid black;padding:5px;display:block;font-family:${font_face};background-color:#${bgcolor};color:#${color};">
 	`sed -n -e "s/^/${command_prefix}/" -e 1,${max_lines}p "$tmp_file"`
-	</pre><font face=$font_face size=0 color=black>Notification mail generated with <a href=https://github.com/robzr/cronmail>cronmail</a>.</font>
+	</pre><font face=$font_face size=0 color=black>$tagline</font>
 	_EOF_
