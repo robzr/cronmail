@@ -1,7 +1,8 @@
 # cronmail
 Bash wrapper script for consistent HTML formatting of cron job output
 
-```Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] command [args...]"
+```
+Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] command [args...]"
   -b    Override basename (default is based on command)
   -e    Subject for error (defaults to: [$basename] Error!)
   -f    Specify from header
@@ -12,8 +13,9 @@ Bash wrapper script for consistent HTML formatting of cron job output
   -p    Prefix command output (defaults is no prefix)
   -r    Specify reply-to
   -s    Subject for successful run (defaults to: [$basename] Successful Run)```
-
+```
 Example usage:
-```$ crontab -l
+```
+$ crontab -l
 */15 * * * * cronmail -m errors@example.com -n rsync -av server:mirror_files /opt/mirror/
 ```
