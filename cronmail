@@ -1,5 +1,5 @@
 #!/bin/bash
-# -- @robzr
+# https://github.com/robzr/cronmail
 
 unset basename header_from header_reply_to mail_from mail_to max_lines reply_to subject_error subject_success
 default_max_lines=1500
@@ -76,11 +76,11 @@ else
   subject="$subject_error"
 fi
 
-sendmail -i "$mail_to" <<-_EOF_
+sendmail -i -t <<-_EOF_
 	${header_from}${header_reply_to}Subject: $subject
+	To: $mail_to
 	Content-Type: text/html
 	X-Entity-Ref-ID: null
-	
 	
 	<font face=$font_face size=2 color=black>
 	<p>Running as user `whoami` on host `hostname -f` at `date`.
