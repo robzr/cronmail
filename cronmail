@@ -14,7 +14,7 @@ while getopts ":b:e:f:hl:m:np:r:s:t:" opt ; do
     e) subject_error=$OPTAR    ;;
     f) mail_from=$OPTARG       ;;
     h) cat <<-_EOF_
-	Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] [-t ..] command [args...]"
+	Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] [-t ..] command [args...]
 	  -b    Override basename (default is based on command)
 	  -e    Subject for error (defaults to: [\$basename] ${msg_error})
 	  -f    Specify from header

@@ -2,7 +2,7 @@
 Bash wrapper script for consistent HTML formatting of cron job output
 
 ```
-Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] command [args...]"
+Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] command [args...]
   -b    Override basename (default is based on command)
   -e    Subject for error (defaults to: [$basename] Error!)
   -f    Specify from header
