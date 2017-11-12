@@ -70,7 +70,7 @@ clean_exit() {
 }
 trap clean_exit EXIT
 
-"$@" > "$tmp_file" 2>&1 
+time "$@" > "$tmp_file" 2>&1 
 exit_status=$?
 
 if [ $exit_status -eq 0 ] ; then
