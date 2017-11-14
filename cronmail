@@ -64,10 +64,7 @@ basename_arg1=${1##*/}
 "
 [ -n "$reply_to" ]         && header_reply_to="Reply-To: $reply_to
 "
-
-bgcolor=${CM_BGCOLOR:-F8F8F8}
-color=${CM_COLOR:-000000}
-font_face=${CM_FONT:-Monaco,Menlo,Courier}
+font_face=${CM_FONT:-Courier New,AndaleMono,Courier,Menlo,monospace}
 
 tmp_file=`mktemp`
 clean_exit() {
@@ -76,7 +73,8 @@ clean_exit() {
 }
 trap clean_exit EXIT
 
-/usr/bin/time -p "$@" > "$tmp_file" 2>&1 
+# /usr/bin/time -p 
+"$@" > "$tmp_file" 2>&1 
 exit_status=$?
 
 if [ $exit_status -eq 0 ] ; then
@@ -94,8 +92,16 @@ sendmail -i -t <<-_EOF_
 	
 	<font face=$font_face size=2 color=black>
 	<p>Running as user `whoami` on host `hostname -f` at `date`.
-	<p>Command (exit status: $exit_status):&nbsp;<font style="color:#${color};background-color:#${bgcolor};">$@</font></font>
-	<pre style = "border:1px solid black;padding:5px;display:block;font-family:${font_face};background-color:#${bgcolor};color:#${color};">
+	<p>Command (exit-status: $exit_status):&nbsp;<font style="color:#000000;background-color:#fafafa;">$@</font></font>
+	<pre style="
+	  border: 1px solid black;
+	  border-radius: 4px;
+	  padding: 7px;
+	  display: block;
+	  font-family: ${font_face};
+	  background-color: #101010;
+	  color: #ffffff;
+	">
 	`sed -n -e "s/^/${command_prefix}/" -e 1,${max_lines}p "$tmp_file"`
 	</pre><font face=$font_face size=0 color=black>$tagline</font>
 	_EOF_
