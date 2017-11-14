@@ -84,15 +84,20 @@ else
   subject="$subject_error"
 fi
 
+highlight="color:#101010;background-color:#f8f8f8;"
+
 sendmail -i -t <<-_EOF_
 	${header_from}${header_reply_to}Subject: $subject
 	To: $mail_to
 	Content-Type: text/html
 	X-Entity-Ref-ID: null
 	
-	<font face=$font_face size=2 color=black>
-	<p>Running as user `whoami` on host `hostname -f` at `date`.
-	<p>Command (exit-status: $exit_status):&nbsp;<font style="color:#000000;background-color:#fafafa;">$@</font></font>
+	<font face="$font_face" size=2 color=black>
+	<p>Running as user <font style="${highlight}">`whoami`</font>
+	 on host <font style="${highlight}">`hostname -f`</font>
+	 at <font style="${highlight}">`date`</font>.
+	<p>Command (exit-status: <font style="${highlight}">$exit_status</font>):&nbsp;<font style="${highlight}">$@</font>
+	</font>
 	<pre style="
 	  border: 1px solid black;
 	  border-radius: 4px;
@@ -100,8 +105,8 @@ sendmail -i -t <<-_EOF_
 	  display: block;
 	  font-family: ${font_face};
 	  background-color: #101010;
-	  color: #ffffff;
+	  color: #f8f8f8;
 	">
 	`sed -n -e "s/^/${command_prefix}/" -e 1,${max_lines}p "$tmp_file"`
-	</pre><font face=$font_face size=0 color=black>$tagline</font>
+	</pre><font face="$font_face" size=0 color=black>$tagline</font>
 	_EOF_
