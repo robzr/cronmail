@@ -1,5 +1,11 @@
 #!/bin/bash
 # https://github.com/robzr/cronmail
+#
+# Order of precedence for options:
+#  - command line options (highest)
+#  - ~/.cronmail
+#  - environment variables (lowest)
+
 
 unset basename header_from header_reply_to mail_from mail_to max_lines reply_to subject_error subject_success tagline
 default_max_lines=1500
@@ -47,10 +53,6 @@ basename_arg1=${1##*/}
 [ -r ~/.cronmail ]         && . ~/.cronmail
 [ -z "$basename" ]         && basename=${CM_BASENAME:-$basename_arg1}
 [ -z "$command_prefix" ]   && command_prefix=${CM_COMMAND_PREFIX:-''}
-[ -n "$mail_from" ]        && header_from="From: $mail_from
-"
-[ -n "$reply_to" ]         && header_reply_to="Reply-To: $reply_to
-"
 [ -z "$mail_to" ]          && mail_to=${MAILTO:-root@localhost}
 [ -z "$max_lines" ]        && max_lines=${CM_MAXLINES:-${default_max_lines}}
 [ -z "$reply_to" ]         && reply_to=$CM_REPLY_TO
@@ -58,6 +60,10 @@ basename_arg1=${1##*/}
 [ -z "$subject_success" ]  && subject_success=${CM_SUBJECT_SUCCESS:-[$basename] ${msg_success}}
 [ -z "$tagline" ]          && tagline=${CM_TAGLINE:-${default_tagline}}
 
+[ -n "$mail_from" ]        && header_from="From: $mail_from
+"
+[ -n "$reply_to" ]         && header_reply_to="Reply-To: $reply_to
+"
 
 bgcolor=${CM_BGCOLOR:-F8F8F8}
 color=${CM_COLOR:-000000}
