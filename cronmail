@@ -17,7 +17,7 @@ default_tagline='Notification mail generated with <a href=https://github.com/rob
 while getopts ":b:e:f:hl:m:np:r:s:t:" opt ; do
   case $opt in
     b) basename=$OPTARG        ;;
-    e) subject_error=$OPTAR    ;;
+    e) subject_error=$OPTARG   ;;
     f) mail_from=$OPTARG       ;;
     h) cat <<-_EOF_
 	Usage: cronmail [-b ..] [-e ..] [-h] [-l #] [-m ..] [-n] [-p ..] [-r ..] [-s ..] [-t ..] command [args...]
