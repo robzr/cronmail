@@ -74,7 +74,7 @@ clean_exit() {
 trap clean_exit EXIT
 
 # /usr/bin/time -p 
-eval $@ > "$tmp_file" 2>&1 
+eval $@ >> "$tmp_file" 2>> "$tmp_file"
 exit_status=$?
 
 if [ $exit_status -eq 0 ] ; then
