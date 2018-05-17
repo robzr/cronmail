@@ -7,7 +7,7 @@
 #  - environment variables (lowest)
 
 
-unset basename header_from header_reply_to mail_from mail_to max_lines reply_to subject_error subject_success tagline
+unset basename header_from header_reply_to mail_from mail_to mail_to_default mail_to_success max_lines reply_to subject_error subject_success tagline
 default_max_lines=1500
 msg_error='Error!'
 msg_success='Successful Run'
@@ -27,6 +27,7 @@ while getopts ":b:e:f:hl:m:np:r:s:t:" opt ; do
 	  -h    Print this help
 	  -l    Limit output lines (default: $default_max_lines)
 	  -m    Specify mail-to (defaults to \$MAILTO)
+	  -M    Optionally override mail-to for success only
 	  -n    Suppress email on success
 	  -p    Prefix command output (defaults is no prefix)
 	  -r    Specify reply-to
@@ -36,7 +37,8 @@ while getopts ":b:e:f:hl:m:np:r:s:t:" opt ; do
        exit -1
        ;;
     l) max_lines=$OPTARG       ;;
-    m) mail_to=$OPTARG         ;;
+    m) mail_to_default=$OPTARG ;;
+    M) mail_to_success=$OPTARG ;;
     n) suppress_success=true   ;;
     p) command_prefix=$OPTARG  ;;
     r) reply_to=$OPTARG        ;;
@@ -53,7 +55,8 @@ basename_arg1=${1##*/}
 [ -r ~/.cronmail ]         && . ~/.cronmail
 [ -z "$basename" ]         && basename=${CM_BASENAME:-$basename_arg1}
 [ -z "$command_prefix" ]   && command_prefix=${CM_COMMAND_PREFIX:-''}
-[ -z "$mail_to" ]          && mail_to=${MAILTO:-root@localhost}
+[ -z "$mail_to_default" ]  && mail_to_default=${MAILTO:-root@localhost}
+[ -z "$mail_to_success" ]  && mail_to_success=$mail_to_default
 [ -z "$max_lines" ]        && max_lines=${CM_MAXLINES:-${default_max_lines}}
 [ -z "$reply_to" ]         && reply_to=$CM_REPLY_TO
 [ -z "$subject_error" ]    && subject_error=${CM_SUBJECT_ERROR:-[$basename] ${msg_error}}
@@ -80,8 +83,10 @@ exit_status=$?
 if [ $exit_status -eq 0 ] ; then
   $suppress_success && clean_exit
   subject="$subject_success"
+  mail_to=$mail_to_success
 else
   subject="$subject_error"
+  mail_to=$mail_to_default
 fi
 
 highlight="color:#101010;background-color:#f8f8f8;"
